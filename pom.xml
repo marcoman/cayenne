@@ -46,6 +46,8 @@
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<failsafe.rerunFailingTestsCount>2</failsafe.rerunFailingTestsCount>
+		<failsafe.reuseForks>false</failsafe.reuseForks>
     </properties>
 
 	<url>https://cayenne.apache.org/</url>

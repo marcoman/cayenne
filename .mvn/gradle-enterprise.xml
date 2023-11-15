@@ -1,8 +1,7 @@
 <gradleEnterprise>
   <server>
-    <url>http://potato:9080</url>
+    <url>https://develocity-field.gradle.com</url>
     <!-- adjust depending on whether trusted cert is already configured in GE: -->
-    <allowUntrusted>true</allowUntrusted>
   </server>
   <buildScan>
     <publish>ALWAYS</publish>
