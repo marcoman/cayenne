@@ -118,7 +118,7 @@ public class ObjAttributeWrapper implements Wrapper<ObjAttribute> {
         objAttribute.setParent(parent);
     }
 
-    public Class<?> getJavaClass() {
+    public Class<?> getObjAttributeClass() {
         return objAttribute.getJavaClass();
     }
 
@@ -167,7 +167,7 @@ public class ObjAttributeWrapper implements Wrapper<ObjAttribute> {
     }
 
     public String getDbAttributePath() {
-        return objAttribute.getDbAttributePath();
+        return objAttribute.getDbAttributePath().value();
     }
 
 }
