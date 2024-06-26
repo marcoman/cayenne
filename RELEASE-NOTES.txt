@@ -46,6 +46,7 @@ CAY-2795 Add unit tests for the Json type
 CAY-2802 Upgrade Gradle to 7.6.1
 CAY-2803 Test infrastructure: declarative custom DI modules in ServerCase
 CAY-2805 Stop calling exp parser internally
+CAY-2807 EntityProperty.inId(..) / ninId(..) - disambiguate method parameters
 CAY-2814 Select query iterator() and batchIterator() methods return incorrect results
 CAY-2817 Pagination flow refactoring
 CAY-2818 JDK 21 support
@@ -61,15 +62,21 @@ CAY-2828 Rename values in `org.apache.cayenne.configuration.Constants`
 CAY-2829 Merge `BaseContext` with `DataContext` and deprecate it
 CAY-2830 Cleanup `DataContext` code
 CAY-2831 Upgrade Gradle to 8.5
+CAY-2833 Unify code related to the Cayenne model paths processing
 CAY-2834 v11 upgrade handler should update XMLPoolingDataSourceFactory package
 CAY-2835 Custom aggregate functions
 CAY-2837 Deprecate TraversalHelper and move no-op implementations to TraversalHandler
 CAY-2843 Use an IN clause for single field disjoint by ID prefetches
 CAY-2845 Deprecate DataObject in favour of Persistent
+CAY-2849 Switch documentation to `hugo-asciidoctorj-extension`
+CAY-2856 Upgrade Gradle to 8.8
+CAY-2857 Java 22 support
+CAY-2858 Redesign Collection and Map Property API
 
 Bug Fixes:
 
 CAY-2552 ColumnQuery with flattened attributes bug
+CAY-2621 Modeler: project is dirty after a no-change db import
 CAY-2732 Exception when creating ObjEntity from a DbEntity
 CAY-2748 Mutating the list returned from the local query cache changes the cache
 CAY-2755 Modeler: Entities are not sorted by name in the class generation view
@@ -78,6 +85,7 @@ CAY-2763 Split expressions do not work with flattened relationships
 CAY-2764 Split expressions do not work with DB relationships
 CAY-2765 dbimport: check excluded catalogs and schemas for the SQLServer
 CAY-2769 Modeler: 'rootPath' attribute is missing
+CAY-2772 Bootique-style module "extenders" for smoother configuration
 CAY-2774 Overriding service ordering in DI List causes DIRuntimeException
 CAY-2777 Reverse relationship is not set with single table inheritance
 CAY-2782 Modeler: save button becomes active on DataMap comment field focus
@@ -102,5 +110,9 @@ CAY-2840 Vertical Inheritance: Missing subclass attributes with joint prefetch
 CAY-2841 Multi column ColumnSelect with SHARED_CACHE fails after 1st select
 CAY-2844 Joint prefetch doesn't use ObjEntity qualifier
 CAY-2842 Prevent duplicate select columns when using distinct with order by
+CAY-2847 Improve duplicate select column detection when using order by
+CAY-2848 Vertical Inheritance: Updating one-to-many with inverse nullifies other columns
 CAY-2850 Query using Clob comparison with empty String fails
 CAY-2851 Replace Existing OneToOne From New Object
+CAY-2853 Incorrect deletion of entities from flattened attributes
+CAY-2854 Improve delete prevention detection of flattened attribute row

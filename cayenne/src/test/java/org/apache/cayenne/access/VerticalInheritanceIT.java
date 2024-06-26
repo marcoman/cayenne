@@ -30,6 +30,7 @@ import org.apache.cayenne.test.jdbc.DBHelper;
 import org.apache.cayenne.test.jdbc.TableHelper;
 import org.apache.cayenne.testdo.inheritance_vertical.*;
 import org.apache.cayenne.unit.di.runtime.CayenneProjects;
+import org.apache.cayenne.unit.di.runtime.ExtraModules;
 import org.apache.cayenne.unit.di.runtime.RuntimeCase;
 import org.apache.cayenne.unit.di.runtime.UseCayenneRuntime;
 import org.junit.After;
@@ -47,6 +48,8 @@ import java.util.Map;
 import static org.junit.Assert.*;
 
 @UseCayenneRuntime(CayenneProjects.INHERITANCE_VERTICAL_PROJECT)
+// Default sorter fails to properly sort all the relationships in the test schema used
+@ExtraModules(GraphSorterModule.class)
 public class VerticalInheritanceIT extends RuntimeCase {
 
 	@Inject
@@ -689,6 +692,41 @@ public class VerticalInheritanceIT extends RuntimeCase {
 	}
 
 	@Test
+	public void testUpdateFlattenedRelationshipWithInverse() throws SQLException {
+		TableHelper ivOtherTable = new TableHelper(dbHelper, "IV_OTHER");
+		ivOtherTable.setColumns("ID", "NAME").setColumnTypes(Types.INTEGER, Types.VARCHAR);
+
+		TableHelper ivBaseTable = new TableHelper(dbHelper, "IV_BASE");
+		ivBaseTable.setColumns("ID", "NAME", "TYPE").setColumnTypes(Types.INTEGER, Types.VARCHAR, Types.CHAR);
+
+		TableHelper ivImplTable = new TableHelper(dbHelper, "IV_IMPL");
+		ivImplTable.setColumns("ID", "ATTR1", "OTHER3_ID").setColumnTypes(Types.INTEGER, Types.VARCHAR, Types.INTEGER);
+
+		ivOtherTable.insert(1, "other1");
+		ivOtherTable.insert(2, "other2");
+		ivBaseTable.insert(1, "Impl 1", "I");
+		ivImplTable.insert(1, "attr1", 1);
+
+		IvImpl impl = SelectById.query(IvImpl.class, 1).selectOne(context);
+		IvOther other = SelectById.query(IvOther.class, 2).selectOne(context);
+
+		impl.setOther3(other);
+		context.commitChanges();
+		assertEquals("Impl 1", impl.getName());
+		assertEquals("attr1", impl.getAttr1());
+		assertEquals(impl.getOther3(), other);
+
+		{
+			ObjectContext cleanContext = runtime.newContext();
+			IvImpl implFetched = SelectById.query(IvImpl.class, 1).selectOne(cleanContext);
+			IvOther otherFetched = SelectById.query(IvOther.class, 2).selectOne(cleanContext);
+			assertEquals("Impl 1", implFetched.getName());
+			assertEquals("attr1", implFetched.getAttr1());
+			assertEquals(implFetched.getOther3(), otherFetched);
+		}
+	}
+
+	@Test
 	public void testDeleteFlattenedNoValues() throws SQLException {
 		ivAbstractTable.insert(1, null, "S");
 
@@ -830,7 +868,7 @@ public class VerticalInheritanceIT extends RuntimeCase {
 	 * @link https://issues.apache.org/jira/browse/CAY-2840
 	 */
 	@Test
-	public void testJointPrefetchBelongsTo() throws SQLException {
+	public void testBaseJointPrefetchBelongsTo() throws SQLException {
 		TableHelper ivOtherTable = new TableHelper(dbHelper, "IV_OTHER");
 		ivOtherTable.setColumns("ID", "NAME", "BASE_ID").setColumnTypes(Types.INTEGER, Types.VARCHAR, Types.INTEGER);
 
@@ -854,6 +892,175 @@ public class VerticalInheritanceIT extends RuntimeCase {
 		assertEquals("Impl 1", impl.getName());
 		// Ensure that subclass attributes were prefetched correctly
 		assertEquals("attr1", impl.getAttr1());
+	}
+
+	/**
+	 * @link https://issues.apache.org/jira/browse/CAY-2840
+	 */
+	@Test
+	public void testBaseDisjointPrefetchBelongsTo() throws SQLException {
+		TableHelper ivOtherTable = new TableHelper(dbHelper, "IV_OTHER");
+		ivOtherTable.setColumns("ID", "NAME", "BASE_ID").setColumnTypes(Types.INTEGER, Types.VARCHAR, Types.INTEGER);
+
+		TableHelper ivBaseTable = new TableHelper(dbHelper, "IV_BASE");
+		ivBaseTable.setColumns("ID", "NAME", "TYPE").setColumnTypes(Types.INTEGER, Types.VARCHAR, Types.CHAR);
+
+		TableHelper ivImplTable = new TableHelper(dbHelper, "IV_IMPL");
+		ivImplTable.setColumns("ID", "ATTR1").setColumnTypes(Types.INTEGER, Types.VARCHAR);
+
+		ivBaseTable.insert(1, "Impl 1", "I");
+		ivImplTable.insert(1, "attr1");
+		ivOtherTable.insert(1, "other1", 1);
+
+		IvOther other = ObjectSelect.query(IvOther.class).prefetch(IvOther.BASE.disjoint()).selectOne(context);
+		assertNotNull(other);
+		assertNotNull(other.getBase());
+		assertTrue(IvImpl.class.isAssignableFrom(other.getBase().getClass()));
+
+		IvImpl impl = (IvImpl)other.getBase();
+		// Ensure that base attributes were prefetched correctly
+		assertEquals("Impl 1", impl.getName());
+		// Ensure that subclass attributes were prefetched correctly
+		assertEquals("attr1", impl.getAttr1());
+	}
+
+	/**
+	 * @link https://issues.apache.org/jira/browse/CAY-2840
+	 */
+	@Test
+	public void testBaseDisjointByIdPrefetchBelongsTo() throws SQLException {
+		TableHelper ivOtherTable = new TableHelper(dbHelper, "IV_OTHER");
+		ivOtherTable.setColumns("ID", "NAME", "BASE_ID").setColumnTypes(Types.INTEGER, Types.VARCHAR, Types.INTEGER);
+
+		TableHelper ivBaseTable = new TableHelper(dbHelper, "IV_BASE");
+		ivBaseTable.setColumns("ID", "NAME", "TYPE").setColumnTypes(Types.INTEGER, Types.VARCHAR, Types.CHAR);
+
+		TableHelper ivImplTable = new TableHelper(dbHelper, "IV_IMPL");
+		ivImplTable.setColumns("ID", "ATTR1").setColumnTypes(Types.INTEGER, Types.VARCHAR);
+
+		ivBaseTable.insert(1, "Impl 1", "I");
+		ivImplTable.insert(1, "attr1");
+		ivOtherTable.insert(1, "other1", 1);
+
+		IvOther other = ObjectSelect.query(IvOther.class).prefetch(IvOther.BASE.disjointById()).selectOne(context);
+		assertNotNull(other);
+		assertNotNull(other.getBase());
+		assertTrue(IvImpl.class.isAssignableFrom(other.getBase().getClass()));
+
+		IvImpl impl = (IvImpl)other.getBase();
+		// Ensure that base attributes were prefetched correctly
+		assertEquals("Impl 1", impl.getName());
+		// Ensure that subclass attributes were prefetched correctly
+		assertEquals("attr1", impl.getAttr1());
+	}
+
+	/**
+	 * @link https://issues.apache.org/jira/browse/CAY-2855
+	 */
+	@Test
+	public void testImplJointPrefetchBelongsTo() throws SQLException {
+		TableHelper ivOtherTable = new TableHelper(dbHelper, "IV_OTHER");
+		ivOtherTable.setColumns("ID", "NAME", "IMPL_ID").setColumnTypes(Types.INTEGER, Types.VARCHAR, Types.INTEGER);
+
+		TableHelper ivBaseTable = new TableHelper(dbHelper, "IV_BASE");
+		ivBaseTable.setColumns("ID", "NAME", "TYPE").setColumnTypes(Types.INTEGER, Types.VARCHAR, Types.CHAR);
+
+		TableHelper ivImplTable = new TableHelper(dbHelper, "IV_IMPL");
+		ivImplTable.setColumns("ID", "ATTR1").setColumnTypes(Types.INTEGER, Types.VARCHAR);
+
+		ivBaseTable.insert(1, "Impl 1", "I");
+		ivImplTable.insert(1, "attr1");
+		ivOtherTable.insert(1, "other1", 1);
+
+		IvOther other = ObjectSelect.query(IvOther.class).prefetch(IvOther.IMPL.joint()).limit(1).selectOne(context);
+		assertNotNull(other);
+
+		IvImpl impl = other.getImpl();
+		assertNotNull(other.getImpl());
+		// Ensure that base attributes were prefetched correctly
+		assertEquals("Impl 1", impl.getName());
+		// Ensure that subclass attributes were prefetched correctly
+		assertEquals("attr1", impl.getAttr1());
+
+		impl.setOther1(null);
+		impl.setOther2(null);
+		impl.setOther3(null);
+		context.commitChanges();
+		ivOtherTable.deleteAll();
+	}
+
+	/**
+	 * @link https://issues.apache.org/jira/browse/CAY-2855
+	 */
+	@Test
+	public void testImplDisjointPrefetchBelongsTo() throws SQLException {
+		TableHelper ivOtherTable = new TableHelper(dbHelper, "IV_OTHER");
+		ivOtherTable.setColumns("ID", "NAME", "IMPL_ID").setColumnTypes(Types.INTEGER, Types.VARCHAR, Types.INTEGER);
+
+		TableHelper ivBaseTable = new TableHelper(dbHelper, "IV_BASE");
+		ivBaseTable.setColumns("ID", "NAME", "TYPE").setColumnTypes(Types.INTEGER, Types.VARCHAR, Types.CHAR);
+
+		TableHelper ivImplTable = new TableHelper(dbHelper, "IV_IMPL");
+		ivImplTable.setColumns("ID", "ATTR1").setColumnTypes(Types.INTEGER, Types.VARCHAR);
+
+		ivBaseTable.insert(1, "Impl 1", "I");
+		ivImplTable.insert(1, "attr1");
+		ivOtherTable.insert(1, "other1", 1);
+
+		IvOther other = ObjectSelect.query(IvOther.class)
+				.prefetch(IvOther.IMPL.disjoint())
+				.selectOne(context);
+		assertNotNull(other);
+
+		IvImpl impl = other.getImpl();
+		assertNotNull(other.getImpl());
+		// Ensure that base attributes were prefetched correctly
+		assertEquals("Impl 1", impl.getName());
+		// Ensure that subclass attributes were prefetched correctly
+		assertEquals("attr1", impl.getAttr1());
+
+		impl.setOther1(null);
+		impl.setOther2(null);
+		impl.setOther3(null);
+		context.commitChanges();
+		ivOtherTable.deleteAll();
+	}
+
+	/**
+	 * @link https://issues.apache.org/jira/browse/CAY-2855
+	 */
+	@Test
+	public void testImplDisjointByIdPrefetchBelongsTo() throws SQLException {
+		TableHelper ivOtherTable = new TableHelper(dbHelper, "IV_OTHER");
+		ivOtherTable.setColumns("ID", "NAME", "IMPL_ID").setColumnTypes(Types.INTEGER, Types.VARCHAR, Types.INTEGER);
+
+		TableHelper ivBaseTable = new TableHelper(dbHelper, "IV_BASE");
+		ivBaseTable.setColumns("ID", "NAME", "TYPE").setColumnTypes(Types.INTEGER, Types.VARCHAR, Types.CHAR);
+
+		TableHelper ivImplTable = new TableHelper(dbHelper, "IV_IMPL");
+		ivImplTable.setColumns("ID", "ATTR1").setColumnTypes(Types.INTEGER, Types.VARCHAR);
+
+		ivBaseTable.insert(1, "Impl 1", "I");
+		ivImplTable.insert(1, "attr1");
+		ivOtherTable.insert(1, "other1", 1);
+
+		IvOther other = ObjectSelect.query(IvOther.class)
+				.prefetch(IvOther.IMPL.disjointById())
+				.selectOne(context);
+		assertNotNull(other);
+
+		IvImpl impl = other.getImpl();
+		assertNotNull(other.getImpl());
+		// Ensure that base attributes were prefetched correctly
+		assertEquals("Impl 1", impl.getName());
+		// Ensure that subclass attributes were prefetched correctly
+		assertEquals("attr1", impl.getAttr1());
+
+		impl.setOther1(null);
+		impl.setOther2(null);
+		impl.setOther3(null);
+		context.commitChanges();
+		ivOtherTable.deleteAll();
 	}
 
 	/**

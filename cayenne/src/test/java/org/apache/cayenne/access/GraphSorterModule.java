@@ -17,25 +17,19 @@
  *  under the License.
  ****************************************************************/
 
-package org.apache.cayenne.access.translator.select;
+package org.apache.cayenne.access;
 
-import org.apache.cayenne.query.Ordering;
+import org.apache.cayenne.access.flush.operation.DbRowOpSorter;
+import org.apache.cayenne.access.flush.operation.GraphBasedDbRowOpSorter;
+import org.apache.cayenne.di.Binder;
+import org.apache.cayenne.di.Module;
 
-class OrderingGroupByStage extends OrderingAbstractStage {
-
+/**
+ * Test module that sets up {@link GraphBasedDbRowOpSorter} instead of default one
+ */
+public class GraphSorterModule implements Module {
     @Override
-    public void perform(TranslatorContext context) {
-        if (context.getQuery().getOrderings() == null) {
-            return;
-        }
-
-        if (context.hasAggregate()) {
-            // If query is GROUPING then we need to add the order column as a result column
-            QualifierTranslator qualifierTranslator = context.getQualifierTranslator();
-            for (Ordering ordering : context.getQuery().getOrderings()) {
-                processOrdering(qualifierTranslator, context, ordering);
-            }
-        }
+    public void configure(Binder binder) {
+        binder.bind(DbRowOpSorter.class).to(GraphBasedDbRowOpSorter.class);
     }
-
 }

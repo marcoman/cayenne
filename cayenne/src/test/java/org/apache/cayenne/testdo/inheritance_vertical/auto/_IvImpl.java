@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.cayenne.exp.property.DateProperty;
 import org.apache.cayenne.exp.property.EntityProperty;
+import org.apache.cayenne.exp.property.ListProperty;
 import org.apache.cayenne.exp.property.NumericIdProperty;
 import org.apache.cayenne.exp.property.PropertyFactory;
 import org.apache.cayenne.exp.property.SelfProperty;
@@ -33,15 +35,19 @@ public abstract class _IvImpl extends IvBase {
     public static final DateProperty<Date> ATTR0 = PropertyFactory.createDate("attr0", Date.class);
     public static final StringProperty<String> ATTR1 = PropertyFactory.createString("attr1", String.class);
     public static final StringProperty<String> ATTR2 = PropertyFactory.createString("attr2", String.class);
+    public static final ListProperty<IvOther> IMPL_OTHERS = PropertyFactory.createList("implOthers", IvOther.class);
     public static final EntityProperty<IvOther> OTHER1 = PropertyFactory.createEntity("other1", IvOther.class);
     public static final EntityProperty<IvOther> OTHER2 = PropertyFactory.createEntity("other2", IvOther.class);
+    public static final EntityProperty<IvOther> OTHER3 = PropertyFactory.createEntity("other3", IvOther.class);
 
     protected Date attr0;
     protected String attr1;
     protected String attr2;
 
+    protected Object implOthers;
     protected Object other1;
     protected Object other2;
+    protected Object other3;
 
     public void setAttr0(Date attr0) {
         beforePropertyWrite("attr0", this.attr0, attr0);
@@ -73,6 +79,19 @@ public abstract class _IvImpl extends IvBase {
         return this.attr2;
     }
 
+    public void addToImplOthers(IvOther obj) {
+        addToManyTarget("implOthers", obj, true);
+    }
+
+    public void removeFromImplOthers(IvOther obj) {
+        removeToManyTarget("implOthers", obj, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<IvOther> getImplOthers() {
+        return (List<IvOther>)readProperty("implOthers");
+    }
+
     public void setOther1(IvOther other1) {
         setToOneTarget("other1", other1, true);
     }
@@ -89,6 +108,14 @@ public abstract class _IvImpl extends IvBase {
         return (IvOther)readProperty("other2");
     }
 
+    public void setOther3(IvOther other3) {
+        setToOneTarget("other3", other3, true);
+    }
+
+    public IvOther getOther3() {
+        return (IvOther)readProperty("other3");
+    }
+
     @Override
     public Object readPropertyDirectly(String propName) {
         if(propName == null) {
@@ -102,10 +129,14 @@ public abstract class _IvImpl extends IvBase {
                 return this.attr1;
             case "attr2":
                 return this.attr2;
+            case "implOthers":
+                return this.implOthers;
             case "other1":
                 return this.other1;
             case "other2":
                 return this.other2;
+            case "other3":
+                return this.other3;
             default:
                 return super.readPropertyDirectly(propName);
         }
@@ -127,11 +158,17 @@ public abstract class _IvImpl extends IvBase {
             case "attr2":
                 this.attr2 = (String)val;
                 break;
+            case "implOthers":
+                this.implOthers = val;
+                break;
             case "other1":
                 this.other1 = val;
                 break;
             case "other2":
                 this.other2 = val;
+                break;
+            case "other3":
+                this.other3 = val;
                 break;
             default:
                 super.writePropertyDirectly(propName, val);
@@ -152,8 +189,10 @@ public abstract class _IvImpl extends IvBase {
         out.writeObject(this.attr0);
         out.writeObject(this.attr1);
         out.writeObject(this.attr2);
+        out.writeObject(this.implOthers);
         out.writeObject(this.other1);
         out.writeObject(this.other2);
+        out.writeObject(this.other3);
     }
 
     @Override
@@ -162,8 +201,10 @@ public abstract class _IvImpl extends IvBase {
         this.attr0 = (Date)in.readObject();
         this.attr1 = (String)in.readObject();
         this.attr2 = (String)in.readObject();
+        this.implOthers = in.readObject();
         this.other1 = in.readObject();
         this.other2 = in.readObject();
+        this.other3 = in.readObject();
     }
 
 }
