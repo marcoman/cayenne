@@ -740,18 +740,24 @@ public Token getNextToken()
            matchedToken = jjFillToken();
            TokenLexicalActions(matchedToken);
        if (jjnewLexState[jjmatchedKind] != -1)
-         curLexState = jjnewLexState[jjmatchedKind];
+         {
+             curLexState = jjnewLexState[jjmatchedKind];
+         }
            return matchedToken;
         }
         else if ((jjtoSkip[jjmatchedKind >> 6] & (1L << (jjmatchedKind & 077))) != 0L)
         {
          if (jjnewLexState[jjmatchedKind] != -1)
-           curLexState = jjnewLexState[jjmatchedKind];
+           {
+               curLexState = jjnewLexState[jjmatchedKind];
+           }
            continue EOFLoop;
         }
         MoreLexicalActions();
       if (jjnewLexState[jjmatchedKind] != -1)
-        curLexState = jjnewLexState[jjmatchedKind];
+        {
+            curLexState = jjnewLexState[jjmatchedKind];
+        }
         curPos = 0;
         jjmatchedKind = 0x7fffffff;
         try {
@@ -896,9 +902,13 @@ void TokenLexicalActions(Token matchedToken)
    {
       case 30 :
         if (image == null)
-            image = new StringBuffer(new String(input_stream.GetSuffix(jjimageLen + (lengthOfMatch = jjmatchedPos + 1))));
+            {
+                image = new StringBuffer(new String(input_stream.GetSuffix(jjimageLen + (lengthOfMatch = jjmatchedPos + 1))));
+            }
          else
-            image.append(new String(input_stream.GetSuffix(jjimageLen + (lengthOfMatch = jjmatchedPos + 1))));
+            {
+                image.append(new String(input_stream.GetSuffix(jjimageLen + (lengthOfMatch = jjmatchedPos + 1))));
+            }
                             image.setLength(image.length()-1); matchedToken.image = image.toString();
          break;
       default : 

@@ -2566,18 +2566,24 @@ public Token getNextToken()
            matchedToken = jjFillToken();
            TokenLexicalActions(matchedToken);
        if (jjnewLexState[jjmatchedKind] != -1)
-         curLexState = jjnewLexState[jjmatchedKind];
+         {
+             curLexState = jjnewLexState[jjmatchedKind];
+         }
            return matchedToken;
         }
         else if ((jjtoSkip[jjmatchedKind >> 6] & (1L << (jjmatchedKind & 077))) != 0L)
         {
          if (jjnewLexState[jjmatchedKind] != -1)
-           curLexState = jjnewLexState[jjmatchedKind];
+           {
+               curLexState = jjnewLexState[jjmatchedKind];
+           }
            continue EOFLoop;
         }
         MoreLexicalActions();
       if (jjnewLexState[jjmatchedKind] != -1)
-        curLexState = jjnewLexState[jjmatchedKind];
+        {
+            curLexState = jjnewLexState[jjmatchedKind];
+        }
         curPos = 0;
         jjmatchedKind = 0x7fffffff;
         try {

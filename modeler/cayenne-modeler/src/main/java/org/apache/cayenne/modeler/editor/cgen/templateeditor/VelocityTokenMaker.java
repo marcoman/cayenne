@@ -769,7 +769,9 @@ public class VelocityTokenMaker extends AbstractJFlexCTokenMaker {
     zzEndRead = zzStartRead;  /* invalidate buffer    */
 
     if (zzReader != null)
-      zzReader.close();
+      {
+          zzReader.close();
+      }
   }
 
 
