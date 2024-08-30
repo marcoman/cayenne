@@ -25,15 +25,16 @@ import org.apache.cayenne.ObjectId;
 import org.apache.cayenne.Persistent;
 import org.apache.cayenne.access.sqlbuilder.ExpressionNodeBuilder;
 import org.apache.cayenne.access.sqlbuilder.ValueNodeBuilder;
-import org.apache.cayenne.access.sqlbuilder.sqltree.Node;
 import org.apache.cayenne.access.sqlbuilder.sqltree.*;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.TraversalHandler;
 import org.apache.cayenne.exp.parser.ASTCustomOperator;
 import org.apache.cayenne.exp.parser.ASTDbIdPath;
 import org.apache.cayenne.exp.parser.ASTDbPath;
+import org.apache.cayenne.exp.parser.ASTExists;
 import org.apache.cayenne.exp.parser.ASTFullObject;
 import org.apache.cayenne.exp.parser.ASTFunctionCall;
+import org.apache.cayenne.exp.parser.ASTNotExists;
 import org.apache.cayenne.exp.parser.ASTObjPath;
 import org.apache.cayenne.exp.parser.ASTScalar;
 import org.apache.cayenne.exp.parser.ASTSubquery;
@@ -89,6 +90,9 @@ class QualifierTranslator implements TraversalHandler {
             return null;
         }
 
+        // expand complex expressions that could be only interpreted at the execution time
+        qualifier = expandExpression(qualifier);
+
         Node rootNode = new EmptyNode();
         expressionsToSkip.clear();
         boolean hasCurrentNode = currentNode != null;
@@ -112,6 +116,23 @@ class QualifierTranslator implements TraversalHandler {
             return child;
         }
         return rootNode;
+    }
+
+    /**
+     * Preprocess complex expressions that ExpressionFactory can't handle at the creation time.
+     * <br>
+     * Right we only expand {@code EXIST} expressions that could spawn several subqueries.
+     *
+     * @param qualifier to process
+     * @return qualifier with preprocessed complex expressions
+     */
+    Expression expandExpression(Expression qualifier) {
+        return qualifier.transform(o -> {
+            if(o instanceof ASTExists || o instanceof ASTNotExists) {
+                return new ExistsExpressionTranslator(context, (SimpleNode) o).translate();
+            }
+            return o;
+        });
     }
 
     @Override
@@ -247,6 +268,15 @@ class QualifierTranslator implements TraversalHandler {
                     objectNode(scalarVal, null);
                 }
                 return null;
+
+            case CASE_WHEN:
+                return new CaseNode();
+            case WHEN:
+                return new WhenNode();
+            case THEN:
+                return new ThenNode();
+            case ELSE:
+                return new ElseNode();
         }
         return null;
     }
@@ -388,7 +418,7 @@ class QualifierTranslator implements TraversalHandler {
             case BITWISE_AND: case BITWISE_LEFT_SHIFT: case BITWISE_OR: case BITWISE_RIGHT_SHIFT: case BITWISE_XOR:
             case OR: case AND: case LESS_THAN: case LESS_THAN_EQUAL_TO: case GREATER_THAN: case GREATER_THAN_EQUAL_TO:
             case TRUE: case FALSE: case ASTERISK: case EXISTS: case NOT_EXISTS: case SUBQUERY: case ENCLOSING_OBJECT: case FULL_OBJECT:
-            case SCALAR:
+            case SCALAR: case CASE_WHEN: case WHEN: case THEN: case ELSE:
                 return true;
         }
         return false;

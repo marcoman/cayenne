@@ -209,6 +209,26 @@ public abstract class Expression implements Serializable, XMLSerializable {
 	 */
 	public static final int SCALAR = 56;
 
+	/**
+	 * @since 5.0
+	 */
+	public static final int CASE_WHEN = 57;
+
+	/**
+	 * @since 5.0
+	 */
+	public static final int WHEN = 58;
+
+	/**
+	 * @since 5.0
+	 */
+	public static final int THEN = 59;
+
+	/**
+	 * @since 5.0
+	 */
+	public static final int ELSE = 60;
+
 	protected int type = -1;
 
 	/**
@@ -444,6 +464,28 @@ public abstract class Expression implements Serializable, XMLSerializable {
 	 * @since 1.0.6
 	 */
 	public abstract Expression notExp();
+
+	/**
+	 * Returns expression that will be dynamically resolved to proper subqueries based on a relationships used
+	 * (if no relationships are present in the original expression no subqueries will be used).
+	 *
+	 * @return exists expression
+	 *
+	 * @see ExpressionFactory#exists(Expression)
+	 * @since 5.0
+	 */
+	public abstract Expression exists();
+
+	/**
+	 * Returns expression that will be dynamically resolved to proper subqueries based on a relationships used
+	 * (if no relationships are present in the original expression no subqueries will be used).
+	 *
+	 * @return not exists expression
+	 *
+	 * @see ExpressionFactory#notExists(Expression)
+	 * @since 5.0
+	 */
+	public abstract Expression notExists();
 
 	/**
 	 * Returns a count of operands of this expression. In real life there are

@@ -38,8 +38,6 @@ public class CaseNode extends Node {
 
     @Override
     public void appendChildrenEnd(QuotingAppendable buffer) {
-        if(parent != null) {
             buffer.append(" END");
-        }
     }
 }

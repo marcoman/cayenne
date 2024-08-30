@@ -74,9 +74,10 @@ public class UpgradeHandler_V11Test extends BaseUpgradeHandlerTest {
         assertEquals(1, objEntities.getLength());
         Node objEntity = objEntities.item(0);
         NamedNodeMap attributes = objEntity.getAttributes();
-        assertEquals(2, attributes.getLength());
+        assertEquals(3, attributes.getLength());
         assertEquals("Artist", attributes.getNamedItem("name").getNodeValue());
         assertEquals("Artist", attributes.getNamedItem("dbEntityName").getNodeValue());
+        assertEquals("org.apache.cayenne.GenericPersistentObject", attributes.getNamedItem("className").getNodeValue());
         assertEquals(3, objEntity.getChildNodes().getLength());
         assertEquals("http://cayenne.apache.org/schema/11/info",
                      objEntity.getFirstChild().getNextSibling().getAttributes().getNamedItem("xmlns:info")
@@ -158,7 +159,7 @@ public class UpgradeHandler_V11Test extends BaseUpgradeHandlerTest {
         Element root = document.getDocumentElement();
 
         // check cgen config is updated
-        NodeList dbimport = root.getElementsByTagName("dbimport");
+        NodeList dbimport = root.getElementsByTagName("dbImport");
         assertEquals(1, dbimport.getLength());
         Node dbimportConfig = dbimport.item(0);
         assertEquals("http://cayenne.apache.org/schema/11/dbimport",

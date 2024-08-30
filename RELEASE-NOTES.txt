@@ -9,12 +9,13 @@ https://issues.apache.org/jira/browse/CAY
 
 ----------------------------------
 Release: 5.0-M1
-Date:
+Date: Aug 28, 2024
 ----------------------------------
 Changes/New Features:
 
 CAY-2378 Switch usage of SelectQuery to ObjectSelect internally
 CAY-2498 Rename packages to prevent crossing package names
+CAY-2597 case-when implementation
 CAY-2715 Support ANY and ALL expressions for subqueries
 CAY-2737 Cayenne 5.0: cleanup deprecated code
 CAY-2741 Cleanup TransactionDescriptor and deprecate DefaultTransactionDescriptor
@@ -41,6 +42,7 @@ CAY-2780 Modeler: Multiple configurations for classes generation
 CAY-2781 Enable 'Create PK properties' by default in the cgen configuration
 CAY-2784 Remove 'Use Java primitive types' option from dbimport
 CAY-2785 Modeler: improve folder selection for cgen
+CAY-2787 Modeler: Ability to sort DB Import rules
 CAY-2788 DbImport: Add fallback option for the batch attribute loader
 CAY-2795 Add unit tests for the Json type
 CAY-2802 Upgrade Gradle to 7.6.1
@@ -48,6 +50,7 @@ CAY-2803 Test infrastructure: declarative custom DI modules in ServerCase
 CAY-2805 Stop calling exp parser internally
 CAY-2807 EntityProperty.inId(..) / ninId(..) - disambiguate method parameters
 CAY-2814 Select query iterator() and batchIterator() methods return incorrect results
+CAY-2816 (NOT) EXIST usability - provide simple expression syntax
 CAY-2817 Pagination flow refactoring
 CAY-2818 JDK 21 support
 CAY-2819 DataContext.performIteratedQuery() method should be unified with iterator() method
@@ -68,15 +71,21 @@ CAY-2835 Custom aggregate functions
 CAY-2837 Deprecate TraversalHelper and move no-op implementations to TraversalHandler
 CAY-2843 Use an IN clause for single field disjoint by ID prefetches
 CAY-2845 Deprecate DataObject in favour of Persistent
+CAY-2846 Modeler: Allow to disable some validation rules in the project
 CAY-2849 Switch documentation to `hugo-asciidoctorj-extension`
 CAY-2856 Upgrade Gradle to 8.8
 CAY-2857 Java 22 support
 CAY-2858 Redesign Collection and Map Property API
+CAY-2862 Cleanup and upgrade Maven plugins dependencies
+CAY-2865 Upgrade test dependencies
+CAY-2867 Tweak GraphBasedDbRowOpSorter logic to allow related updates
+CAY-2870 Modeler: Upgrade CayenneDataObject to GenericPersistentObject
 
 Bug Fixes:
 
 CAY-2552 ColumnQuery with flattened attributes bug
 CAY-2621 Modeler: project is dirty after a no-change db import
+CAY-2667 Fix Issues with Generic Vertical Inheritance
 CAY-2732 Exception when creating ObjEntity from a DbEntity
 CAY-2748 Mutating the list returned from the local query cache changes the cache
 CAY-2755 Modeler: Entities are not sorted by name in the class generation view
@@ -98,6 +107,7 @@ CAY-2794 Fix Incorrect JavaType for Vertical-Inheritance Attributes
 CAY-2796 Cayenne custom json formatter produces invalid json
 CAY-2800 Modeler saves map.xml files with schema ordering error
 CAY-2801 Incorrect equals() implementation in IdGenerationMarker could cause data missing in the commit
+CAY-2804 LocalTimeValueType potential loss of precision
 CAY-2806 Incorrect processing of unicode escape syntax in JSON
 CAY-2809 Cayenne Expression grammar doesn't allow custom function as an argument for string functions
 CAY-2810 Can't use custom operator expression with aggregate functions
@@ -116,3 +126,6 @@ CAY-2850 Query using Clob comparison with empty String fails
 CAY-2851 Replace Existing OneToOne From New Object
 CAY-2853 Incorrect deletion of entities from flattened attributes
 CAY-2854 Improve delete prevention detection of flattened attribute row
+CAY-2866 DefaultDataDomainFlushAction breaks on circular relationship update
+CAY-2868 Regression: DefaultDbRowOpSorter shouldn't sort update operations
+CAY-2869 Upgrade handler v11 removes db import configuration

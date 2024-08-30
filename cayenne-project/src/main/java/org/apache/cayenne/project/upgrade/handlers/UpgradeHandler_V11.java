@@ -77,13 +77,14 @@ public class UpgradeHandler_V11 implements UpgradeHandler {
     @Override
     public void processDataMapDom(UpgradeUnit upgradeUnit) {
         updateDataMapSchemaAndVersion(upgradeUnit);
-        updateExtensionSchema(upgradeUnit, "cgen");
-        updateExtensionSchema(upgradeUnit, "dbimport");
-        updateExtensionSchema(upgradeUnit, "graph");
+        updateExtensionSchema(upgradeUnit, CGEN);
+        updateExtensionSchema(upgradeUnit, DB_IMPORT);
+        updateExtensionSchema(upgradeUnit, GRAPH);
         upgradeComments(upgradeUnit);
 
         dropROPProperties(upgradeUnit);
         dropObjEntityClientInfo(upgradeUnit);
+        upgradeGenericObjEntity(upgradeUnit);
         updateCgenConfig(upgradeUnit);
         updateDbImportConfig(upgradeUnit);
     }
@@ -147,11 +148,29 @@ public class UpgradeHandler_V11 implements UpgradeHandler {
         }
     }
 
+    private void upgradeGenericObjEntity(UpgradeUnit upgradeUnit) {
+        NodeList objEntityNodes;
+        try {
+            XPath xpath = XPathFactory.newInstance().newXPath();
+            objEntityNodes = (NodeList) xpath.evaluate("/data-map/obj-entity", upgradeUnit.getDocument(), XPathConstants.NODESET);
+        } catch (Exception ex) {
+            return;
+        }
+
+        for (int j = 0; j < objEntityNodes.getLength(); j++) {
+            Element objEntityElement = (Element) objEntityNodes.item(j);
+            String className = objEntityElement.getAttribute("className");
+            if("org.apache.cayenne.CayenneDataObject".equals(className)) {
+                objEntityElement.setAttribute("className", "org.apache.cayenne.GenericPersistentObject");
+            }
+        }
+    }
+
     private void updateDbImportConfig(UpgradeUnit upgradeUnit) {
         XPath xpath = XPathFactory.newInstance().newXPath();
         NodeList nodes;
         try {
-            nodes = (NodeList) xpath.evaluate("/data-map/*[local-name()='dbimport']/*[local-name()='usePrimitives']",
+            nodes = (NodeList) xpath.evaluate("/data-map/*[local-name()='" + DB_IMPORT + "']/*[local-name()='usePrimitives']",
                     upgradeUnit.getDocument(), XPathConstants.NODESET);
         } catch (Exception e) {
             return;
@@ -192,9 +211,9 @@ public class UpgradeHandler_V11 implements UpgradeHandler {
         NodeList queryTemplates;
         NodeList querySuperTemplates;
         try {
-            queryTemplates = (NodeList) xpath.evaluate("/data-map/*[local-name()='cgen']/*[local-name()='queryTemplate']",
+            queryTemplates = (NodeList) xpath.evaluate("/data-map/*[local-name()='" + CGEN + "']/*[local-name()='queryTemplate']",
                     upgradeUnit.getDocument(), XPathConstants.NODESET);
-            querySuperTemplates = (NodeList) xpath.evaluate("/data-map/*[local-name()='cgen']/*[local-name()='querySuperTemplate']",
+            querySuperTemplates = (NodeList) xpath.evaluate("/data-map/*[local-name()='" + CGEN + "']/*[local-name()='querySuperTemplate']",
                     upgradeUnit.getDocument(), XPathConstants.NODESET);
         } catch (Exception e) {
             return;
@@ -215,7 +234,7 @@ public class UpgradeHandler_V11 implements UpgradeHandler {
         XPath xpath = XPathFactory.newInstance().newXPath();
         NodeList nodes;
         try {
-            nodes = (NodeList) xpath.evaluate("/data-map/*[local-name()='cgen']/*[local-name()='client']",
+            nodes = (NodeList) xpath.evaluate("/data-map/*[local-name()='" + CGEN + "']/*[local-name()='client']",
                     upgradeUnit.getDocument(), XPathConstants.NODESET);
         } catch (Exception e) {
             return;
@@ -246,7 +265,7 @@ public class UpgradeHandler_V11 implements UpgradeHandler {
         XPath xpath = XPathFactory.newInstance().newXPath();
         NodeList templates;
         try {
-            templates = (NodeList) xpath.evaluate("/data-map/*[local-name()='cgen']/*[local-name()='" + nodeName + "']",
+            templates = (NodeList) xpath.evaluate("/data-map/*[local-name()='" + CGEN + "']/*[local-name()='" + nodeName + "']",
                     upgradeUnit.getDocument(), XPathConstants.NODESET);
         } catch (Exception e) {
             return;
