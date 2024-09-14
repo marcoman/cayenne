@@ -18,6 +18,7 @@
  ****************************************************************/
 package org.apache.cayenne.access.types;
 
+import static io.github.pixee.security.ObjectInputFilters.createSafeObjectInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
@@ -104,7 +105,7 @@ class SerializableTypeFactory implements ExtendedTypeFactory {
 		Object toJavaObject(byte[] bytes) {
 			try {
 				return bytes != null && bytes.length > 0
-						? new ObjectInputStream(new ByteArrayInputStream(bytes)).readObject() : null;
+						? createSafeObjectInputStream(new ByteArrayInputStream(bytes)).readObject() : null;
 			} catch (Exception e) {
 				throw new CayenneRuntimeException("Error deserializing object", e);
 			}

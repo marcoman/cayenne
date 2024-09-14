@@ -140,6 +140,10 @@
 			<artifactId>db2</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>io.github.pixee</groupId>
+			<artifactId>java-security-toolkit</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<resources>
@@ -207,7 +211,7 @@
 						<configuration>
 							<target>
 								<!-- This will remove duplicate Node file -->
-								<delete file="${project.build.directory}/generated-sources/jjtree/org/apache/cayenne/ejbql/parser/Node.java" />
+								file -->
 							</target>
 						</configuration>
 						<goals>

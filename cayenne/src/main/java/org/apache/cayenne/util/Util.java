@@ -19,6 +19,7 @@
 
 package org.apache.cayenne.util;
 
+import io.github.pixee.security.ObjectInputFilters;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.ConfigurationException;
 import org.apache.cayenne.PersistenceState;
@@ -337,6 +338,7 @@ public class Util {
 		}
 
 		try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bytes.toByteArray()))) {
+			ObjectInputFilters.enableObjectFilterIfUnprotected(in);
 			return (T) in.readObject();
 		}
 	}
