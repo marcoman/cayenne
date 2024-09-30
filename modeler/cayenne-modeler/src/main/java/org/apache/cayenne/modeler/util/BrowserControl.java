@@ -19,6 +19,7 @@
 
 package org.apache.cayenne.modeler.util;
 
+import io.github.pixee.security.SystemCommand;
 import java.lang.reflect.Method;
 
 /**
@@ -42,7 +43,7 @@ public class BrowserControl {
             if (OperatingSystem.getOS() == OperatingSystem.WINDOWS) {
                 // cmd = 'rundll32 url.dll,FileProtocolHandler http://...'
                 String cmd = WIN_PATH + " " + WIN_FLAG + " " + url;
-                Runtime.getRuntime().exec(cmd);
+                SystemCommand.runCommand(Runtime.getRuntime(), cmd);
             }
             else if (OperatingSystem.getOS() == OperatingSystem.MAC_OS_X) {
                 Class<?> fileManager = Class.forName("com.apple.eio.FileManager");
@@ -55,10 +56,10 @@ public class BrowserControl {
                         "netscape"
                 };
                 for (String browser : browsers) {
-                    if (Runtime.getRuntime().exec(new String[] {
+                    if (SystemCommand.runCommand(Runtime.getRuntime(), new String[] {
                             "which", browser
                     }).waitFor() == 0) {
-                        Runtime.getRuntime().exec(new String[] {
+                        SystemCommand.runCommand(Runtime.getRuntime(), new String[] {
                                 browser, url
                         });
                         break;
