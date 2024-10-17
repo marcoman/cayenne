@@ -19,6 +19,7 @@
 
 package org.apache.cayenne.tools;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.apache.cayenne.gen.CgenConfiguration;
 import org.apache.cayenne.gen.TemplateType;
 import org.apache.cayenne.map.DataMap;
@@ -355,7 +356,7 @@ public class CayenneGeneratorTaskTest {
 	private void assertPackage(BufferedReader in, String packageName) throws Exception {
 
 		String s = null;
-		while ((s = in.readLine()) != null) {
+		while ((s = BoundedLineReader.readLine(in, 5_000_000)) != null) {
 			if (Pattern.matches("^package\\s+([^\\s;]+);", s)) {
 				assertTrue(s.indexOf(packageName) > 0);
 				return;
@@ -370,7 +371,7 @@ public class CayenneGeneratorTaskTest {
 		Pattern classPattern = Pattern.compile("^public\\s+");
 
 		String s = null;
-		while ((s = in.readLine()) != null) {
+		while ((s = BoundedLineReader.readLine(in, 5_000_000)) != null) {
 			if (classPattern.matcher(s).find()) {
 				assertTrue(s.indexOf(className) > 0);
 				if(extendsName != null) {

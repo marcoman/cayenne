@@ -19,6 +19,7 @@
 
 package org.apache.cayenne.gen;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.apache.cayenne.exp.Expression;
 import org.apache.cayenne.exp.ExpressionFactory;
 import org.apache.cayenne.map.DataMap;
@@ -177,7 +178,7 @@ public class BaseTemplatesGenerationTest {
         StringBuilder expected = new StringBuilder();
         try(BufferedReader resource = new BufferedReader(new InputStreamReader(stream))) {
             String line;
-            while ((line = resource.readLine()) != null) {
+            while ((line = BoundedLineReader.readLine(resource, 5_000_000)) != null) {
                 expected.append(line);
             }
         }

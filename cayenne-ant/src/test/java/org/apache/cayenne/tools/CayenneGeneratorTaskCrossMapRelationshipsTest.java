@@ -19,6 +19,7 @@
 
 package org.apache.cayenne.tools;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.apache.cayenne.test.file.FileUtil;
 import org.apache.cayenne.test.resource.ResourceUtil;
 import org.apache.tools.ant.Location;
@@ -106,7 +107,7 @@ public class CayenneGeneratorTaskCrossMapRelationshipsTest {
 
 		try (BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(f)));) {
 			String s = null;
-			while ((s = in.readLine()) != null) {
+			while ((s = BoundedLineReader.readLine(in, 5_000_000)) != null) {
 				if (s.contains(content))
 					return;
 			}
@@ -127,7 +128,7 @@ public class CayenneGeneratorTaskCrossMapRelationshipsTest {
 	private void assertPackage(BufferedReader in, String packageName) throws Exception {
 
 		String s = null;
-		while ((s = in.readLine()) != null) {
+		while ((s = BoundedLineReader.readLine(in, 5_000_000)) != null) {
 
 			if (Pattern.matches("^package\\s+([^\\s;]+);", s)) {
 				assertTrue(s.contains(packageName));
@@ -143,7 +144,7 @@ public class CayenneGeneratorTaskCrossMapRelationshipsTest {
 		Pattern classPattern = Pattern.compile("^public\\s+");
 
 		String s = null;
-		while ((s = in.readLine()) != null) {
+		while ((s = BoundedLineReader.readLine(in, 5_000_000)) != null) {
 			if (classPattern.matcher(s).find()) {
 				assertTrue(s.contains(className));
 				assertTrue(s.contains(extendsName));

@@ -19,6 +19,7 @@
 
 package org.apache.cayenne.util;
 
+import io.github.pixee.security.BoundedLineReader;
 import org.apache.cayenne.Cayenne;
 import org.apache.cayenne.ConfigurationException;
 import org.apache.cayenne.PersistenceState;
@@ -120,7 +121,7 @@ public class Util {
 
 		try (BufferedReader in = new BufferedReader(new FileReader(file));) {
 			String line = null;
-			while ((line = in.readLine()) != null) {
+			while ((line = BoundedLineReader.readLine(in, 5_000_000)) != null) {
 				buf.append(line).append(joinWith);
 			}
 		}

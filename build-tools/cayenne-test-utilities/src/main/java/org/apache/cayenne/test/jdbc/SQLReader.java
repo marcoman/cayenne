@@ -18,6 +18,7 @@
  ****************************************************************/
 package org.apache.cayenne.test.jdbc;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -49,7 +50,7 @@ public class SQLReader {
 
 			String line;
 			StringBuilder statement = new StringBuilder();
-			while ((line = reader.readLine()) != null) {
+			while ((line = BoundedLineReader.readLine(reader, 5_000_000)) != null) {
 				if (appendLine(statement, line, separator)) {
 					statements.add(statement.toString());
 					statement = new StringBuilder();
