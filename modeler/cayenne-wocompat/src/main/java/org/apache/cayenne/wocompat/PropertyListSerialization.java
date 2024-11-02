@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.file.Files;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
@@ -90,7 +91,7 @@ public class PropertyListSerialization {
 	public static void propertyListToFile(File f, Object plist) {
 		try {
 
-			try (BufferedWriter out = new BufferedWriter(new FileWriter(f));) {
+			try (BufferedWriter out = Files.newBufferedWriter(f.toPath());) {
 				writeObject("", out, plist);
 			}
 		} catch (IOException ioex) {
