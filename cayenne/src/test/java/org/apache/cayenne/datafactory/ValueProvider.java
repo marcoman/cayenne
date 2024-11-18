@@ -18,13 +18,14 @@
  ****************************************************************/
 package org.apache.cayenne.datafactory;
 
+import java.security.SecureRandom;
 import java.util.Random;
 
 /**
  * @since 4.0
  */
 public interface ValueProvider<T> {
-    Random RANDOM = new Random();
+    Random RANDOM = new SecureRandom();
 
     ValueProvider<String> STREET_NAMES = new DictionaryValueProvider<String>(RANDOM) {
         @Override

@@ -18,6 +18,7 @@
  ****************************************************************/
 package org.apache.cayenne.crypto.unit;
 
+import java.security.SecureRandom;
 import org.apache.cayenne.crypto.key.KeySource;
 import org.apache.cayenne.crypto.transformer.bytes.Header;
 import org.apache.cayenne.runtime.CayenneRuntime;
@@ -37,7 +38,7 @@ import java.util.zip.GZIPInputStream;
 public class CryptoUnitUtils {
 
     public static byte[] bytesOfSize(int len) {
-        Random r = new Random();
+        Random r = new SecureRandom();
         byte[] b = new byte[len];
         r.nextBytes(b);
         return b;
