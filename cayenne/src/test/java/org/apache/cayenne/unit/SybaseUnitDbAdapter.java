@@ -19,6 +19,7 @@
 
 package org.apache.cayenne.unit;
 
+import java.sql.PreparedStatement;
 import org.apache.cayenne.dba.DbAdapter;
 import org.apache.cayenne.map.DataMap;
 import org.apache.cayenne.map.DbEntity;
@@ -128,11 +129,10 @@ public class SybaseUnitDbAdapter extends UnitDbAdapter {
 	protected void dropConstraints(Connection con, String tableName) throws Exception {
 		List<String> names = new ArrayList<>(3);
 
-		try (Statement select = con.createStatement();) {
+		try (PreparedStatement select = con.prepareStatement("SELECT t0.name FROM sysobjects t0, sysconstraints t1, sysobjects t2 WHERE t0.id = t1.constrid and t1.tableid = t2.id and t2.name = ?");) {
 
-			try (ResultSet rs = select.executeQuery("SELECT t0.name "
-					+ "FROM sysobjects t0, sysconstraints t1, sysobjects t2 "
-					+ "WHERE t0.id = t1.constrid and t1.tableid = t2.id and t2.name = '" + tableName + "'");) {
+			select.setString(1, tableName);
+			try (ResultSet rs = select.execute();) {
 
 				while (rs.next()) {
 					names.add(rs.getString("name"));
