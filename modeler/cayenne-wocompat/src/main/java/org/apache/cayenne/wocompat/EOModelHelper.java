@@ -19,6 +19,8 @@
 
 package org.apache.cayenne.wocompat;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -397,7 +399,7 @@ public class EOModelHelper {
 	 * Returns InputStream to read an EOModel index file.
 	 */
 	protected InputStream openIndexStream() throws Exception {
-		return new URL(modelUrl, "index.eomodeld").openStream();
+		return Urls.create(modelUrl, "index.eomodeld", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS).openStream();
 	}
 
 	/**
@@ -409,7 +411,7 @@ public class EOModelHelper {
 	 *         <code>entityname.plist</code> file can not be located.
 	 */
 	protected InputStream openEntityStream(String entityName) throws Exception {
-		return new URL(modelUrl, entityName + ".plist").openStream();
+		return Urls.create(modelUrl, entityName + ".plist", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS).openStream();
 	}
 
 	/**
@@ -421,6 +423,6 @@ public class EOModelHelper {
 	 *         <code>entityname.plist</code> file can not be located.
 	 */
 	protected InputStream openQueryStream(String entityName) throws Exception {
-		return new URL(modelUrl, entityName + ".fspec").openStream();
+		return Urls.create(modelUrl, entityName + ".fspec", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS).openStream();
 	}
 }

@@ -18,6 +18,8 @@
  ****************************************************************/
 package org.apache.cayenne.resource;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -38,7 +40,7 @@ public class URLResource implements Resource {
 
     public Resource getRelativeResource(String relativePath) {
         try {
-            return new URLResource(new URL(url, relativePath));
+            return new URLResource(Urls.create(url, relativePath, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS));
         }
         catch (MalformedURLException e) {
             throw new CayenneRuntimeException(

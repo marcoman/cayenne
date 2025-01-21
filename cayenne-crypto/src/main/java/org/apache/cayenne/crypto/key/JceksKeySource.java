@@ -18,6 +18,8 @@
  ****************************************************************/
 package org.apache.cayenne.crypto.key;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -106,7 +108,7 @@ public class JceksKeySource implements KeySource {
 
 		KeyStore keyStore = KeyStore.getInstance(JCEKS_KEYSTORE_TYPE);
 
-		URL url = new URL(keyStoreUrl);
+		URL url = Urls.create(keyStoreUrl, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 
 		try (InputStream in = url.openStream();) {
 			keyStore.load(in, null);
