@@ -18,6 +18,8 @@
  ****************************************************************/
 package org.apache.cayenne.test.resource;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -75,7 +77,7 @@ public class ResourceUtil {
 		// https://issues.apache.org/struts/browse/SB-35
 		// Basically, spaces in filenames make maven cry.
 		try {
-			return new URL(classloaderUrl.toExternalForm().replaceAll(" ", "%20"));
+			return Urls.create(classloaderUrl.toExternalForm().replaceAll(" ", "%20"), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 		} catch (MalformedURLException e) {
 			throw new RuntimeException("Error constructing URL.", e);
 		}

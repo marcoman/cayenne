@@ -19,6 +19,8 @@
 
 package org.apache.cayenne.modeler.dialog.pref;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.Frame;
@@ -116,7 +118,7 @@ public class MavenDependencyDialog extends CayenneController {
         }
 
         try {
-            BufferedInputStream is = new BufferedInputStream(new URL(srcUrl).openStream());
+            BufferedInputStream is = new BufferedInputStream(Urls.create(srcUrl, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS).openStream());
             OutputStream os = new FileOutputStream(dstFile);
             transferTo(is, os);
         } catch (FileNotFoundException fnf) {

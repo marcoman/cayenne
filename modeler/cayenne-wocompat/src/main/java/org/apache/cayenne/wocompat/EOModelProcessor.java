@@ -19,6 +19,8 @@
 
 package org.apache.cayenne.wocompat;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.apache.cayenne.dba.TypesMapping;
 import org.apache.cayenne.dbsync.naming.NameBuilder;
 import org.apache.cayenne.exp.ExpressionException;
@@ -85,12 +87,12 @@ public class EOModelProcessor {
 		String urlString = url.toExternalForm();
 
 		if (!urlString.endsWith(".eomodeld")) {
-			url = new URL(urlString + ".eomodeld");
+			url = Urls.create(urlString + ".eomodeld", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 		}
 
 		Parser plistParser = new Parser();
 
-		try (InputStream in = new URL(url, "index.eomodeld").openStream();) {
+		try (InputStream in = Urls.create(url, "index.eomodeld", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS).openStream();) {
 			plistParser.ReInit(in);
 			return (Map) plistParser.propertyList();
 		}

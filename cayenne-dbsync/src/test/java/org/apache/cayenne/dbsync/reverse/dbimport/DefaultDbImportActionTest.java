@@ -18,6 +18,8 @@
  ****************************************************************/
 package org.apache.cayenne.dbsync.reverse.dbimport;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.apache.cayenne.configuration.DataChannelDescriptorLoader;
 import org.apache.cayenne.configuration.DataMapLoader;
 import org.apache.cayenne.configuration.runtime.DataSourceFactory;
@@ -313,7 +315,7 @@ public class DefaultDbImportActionTest {
         DbImportConfiguration params = mock(DbImportConfiguration.class);
         when(params.getCayenneProject()).thenReturn(null);
 
-        URL outUrl = new URL(getPackageURL(), "dbimport/testSaveLoaded1.map.xml");
+        URL outUrl = Urls.create(getPackageURL(), "dbimport/testSaveLoaded1.map.xml", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 
         DefaultDbImportAction action = (DefaultDbImportAction) i.getInstance(DbImportAction.class);
 
@@ -338,7 +340,7 @@ public class DefaultDbImportActionTest {
         Injector i = DIBootstrap.createInjector(new DbSyncModule(), new ToolsModule(log), new DbImportModule());
         DbImportConfiguration params = mock(DbImportConfiguration.class);
 
-        URL projectURL = new URL(getPackageURL(), "dbimport/cayenne-testProject2.map.xml");
+        URL projectURL = Urls.create(getPackageURL(), "dbimport/cayenne-testProject2.map.xml", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
         File projectFile = new File(projectURL.toURI());
         projectFile.delete();
         assertFalse(projectFile.exists());
@@ -346,7 +348,7 @@ public class DefaultDbImportActionTest {
 
         DefaultDbImportAction action = (DefaultDbImportAction) i.getInstance(DbImportAction.class);
 
-        URL dataMapURL = new URL(getPackageURL(), "dbimport/testSaveLoaded2.map.xml");
+        URL dataMapURL = Urls.create(getPackageURL(), "dbimport/testSaveLoaded2.map.xml", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 
         File dataMapFile = new File(dataMapURL.toURI());
         dataMapFile.delete();
@@ -374,7 +376,7 @@ public class DefaultDbImportActionTest {
         Injector i = DIBootstrap.createInjector(new DbSyncModule(), new ToolsModule(log), new DbImportModule());
         DbImportConfiguration params = mock(DbImportConfiguration.class);
 
-        URL projectURL = new URL(getPackageURL(), "dbimport/cayenne-testProject3.map.xml");
+        URL projectURL = Urls.create(getPackageURL(), "dbimport/cayenne-testProject3.map.xml", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
         File projectFile = new File(projectURL.toURI());
         projectFile.delete();
         assertFalse(projectFile.exists());
@@ -391,7 +393,7 @@ public class DefaultDbImportActionTest {
 
         DefaultDbImportAction action = (DefaultDbImportAction) i.getInstance(DbImportAction.class);
 
-        URL dataMapURL = new URL(getPackageURL(), "dbimport/testSaveLoaded3.map.xml");
+        URL dataMapURL = Urls.create(getPackageURL(), "dbimport/testSaveLoaded3.map.xml", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 
         File dataMapFile = new File(dataMapURL.toURI());
         dataMapFile.delete();
@@ -419,7 +421,7 @@ public class DefaultDbImportActionTest {
         Injector i = DIBootstrap.createInjector(new DbSyncModule(), new ToolsModule(log), new DbImportModule());
         DbImportConfiguration params = mock(DbImportConfiguration.class);
 
-        URL projectURL = new URL(getPackageURL(), "dbimport/cayenne-testProject4.map.xml");
+        URL projectURL = Urls.create(getPackageURL(), "dbimport/cayenne-testProject4.map.xml", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
         File projectFile = new File(projectURL.toURI());
         projectFile.delete();
         assertFalse(projectFile.exists());
@@ -437,7 +439,7 @@ public class DefaultDbImportActionTest {
 
         DefaultDbImportAction action = (DefaultDbImportAction) i.getInstance(DbImportAction.class);
 
-        URL dataMapURL = new URL(getPackageURL(), "dbimport/testSaveLoaded4.map.xml");
+        URL dataMapURL = Urls.create(getPackageURL(), "dbimport/testSaveLoaded4.map.xml", Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
 
         File dataMapFile = new File(dataMapURL.toURI());
         dataMapFile.delete();

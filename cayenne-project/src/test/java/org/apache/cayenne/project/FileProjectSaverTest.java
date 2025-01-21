@@ -18,6 +18,8 @@
  ****************************************************************/
 package org.apache.cayenne.project;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import org.apache.cayenne.configuration.ConfigurationNameMapper;
 import org.apache.cayenne.configuration.ConfigurationTree;
 import org.apache.cayenne.configuration.DataChannelDescriptor;
@@ -147,7 +149,7 @@ public class FileProjectSaverTest extends Project2Case {
         String mapFilePath = testFolder.toURI() + "../test.map.xml";
         String mapFileName = "test";
         DataMap testDataMap = new DataMap(mapFileName);
-        testDataMap.setConfigurationSource(new URLResource(new URL(mapFilePath)));
+        testDataMap.setConfigurationSource(new URLResource(Urls.create(mapFilePath, Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS)));
         Project project = new Project(new ConfigurationTree<DataMap>(testDataMap));
 
         saver.save(project);

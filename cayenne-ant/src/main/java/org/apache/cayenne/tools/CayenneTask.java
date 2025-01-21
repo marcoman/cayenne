@@ -19,6 +19,8 @@
 
 package org.apache.cayenne.tools;
 
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 import java.io.File;
 import java.net.URL;
 
@@ -145,7 +147,7 @@ public abstract class CayenneTask extends Task {
     /** Loads and returns DataMap based on <code>map</code> attribute. */
     protected DataMap loadDataMap(Injector injector) throws Exception {
         DataMapLoader loader = injector.getInstance(DataMapLoader.class);
-        return loader.load(new URLResource(new URL(map.getCanonicalPath())));
+        return loader.load(new URLResource(Urls.create(map.getCanonicalPath(), Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS)));
     }
 
     protected DbAdapter getAdapter(Injector injector, DataSource dataSource)
